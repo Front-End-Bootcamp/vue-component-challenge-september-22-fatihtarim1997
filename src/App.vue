@@ -1,34 +1,43 @@
 <script setup>
-import BootcampLogo from "./assets/svg/BootcampLogo.vue"
-import HelloWorld from './components/HelloWorld.vue'
+import { onMounted, ref } from "vue";
+import data from "./assets/svg/data/data.json";
+import SelectBox from "./components/SelectBox.vue";
+import PersonCard from "./components/PersonCard.vue";
+import Test from "./components/test.vue";
+
+const groupNames = ref([]);
+const selectedGroup = ref();
+const selectedPersonList = ref({});
+
+groupNames.value = data;
+// Seçilen grubun kişilerinin filtrelenmesi 
+const selectGroup = (selectedGroup) => {
+	data.forEach((person) => {
+		if (person.group === selectedGroup.value) {
+			selectedPersonList.value = [person];
+		}
+	});
+};
 </script>
 
 <template>
-	<div>
-		<BootcampLogo />
-		<br />
-		<a href="https://vitejs.dev" target="_blank">
-			<img src="/vite.svg" class="logo" alt="Vite logo" />
-		</a>
-		<a href="https://vuejs.org/" target="_blank">
-			<img src="/vue.svg" class="logo vue" alt="Vue logo" />
-		</a>
+	<div class="select_div">
+		<SelectBox :groupNames="groupNames" @selectGroup="selectGroup" />
 	</div>
-	<HelloWorld msg="Vite + Vue" />
+	<hr />
+	<div class="person_div">
+		<PersonCard :selected="selectedPersonList"  />
+	</div>
 </template>
 
 <style scoped>
-.logo {
-	height: 6em;
-	padding: 1.5em;
-	will-change: filter;
+.app_home {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
-
-.logo:hover {
-	filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-	filter: drop-shadow(0 0 2em #42b883aa);
+.person_div {
+	display: flex;
+	flex-wrap: wrap;
 }
 </style>
