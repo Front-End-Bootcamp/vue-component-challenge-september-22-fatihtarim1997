@@ -1,43 +1,74 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import data from "./assets/svg/data/data.json";
-import SelectBox from "./components/SelectBox.vue";
-import PersonCard from "./components/PersonCard.vue";
-import Test from "./components/test.vue";
+
+import groupData from "./assets/data/data.json";
+
+import Button from "./components/Button/Button.vue";
+import Card from "./components/Card/Card.vue";
 
 const groupNames = ref([]);
-const selectedGroup = ref();
-const selectedPersonList = ref({});
+const students = ref([]);
 
-groupNames.value = data;
-// Seçilen grubun kişilerinin filtrelenmesi 
-const selectGroup = (selectedGroup) => {
-	data.forEach((person) => {
-		if (person.group === selectedGroup.value) {
-			selectedPersonList.value = [person];
-		}
-	});
+function getGroupNames() {
+  const groupNames = groupData.map((person) => person.group);
+  const unuqueNames = [...new Set(groupNames)];
+  return unuqueNames;
+}
+
+const getStudent = (name) => {
+  let filterByGroupName = groupData.filter((person) => person.group === name);
+  return filterByGroupName;
 };
-</script>
 
+const filterByNameHandler = (name) => {
+  const result = getStudent(name);
+  students.value = result;
+ 
+};
+
+onMounted((name) => {
+  groupNames.value = getGroupNames();
+});
+</script>
 <template>
-	<div class="select_div">
-		<SelectBox :groupNames="groupNames" @selectGroup="selectGroup" />
-	</div>
-	<hr />
-	<div class="person_div">
-		<PersonCard :selected="selectedPersonList"  />
-	</div>
+  <main class="main">
+    <header class="header">
+      <Button
+        v-for="name in groupNames"
+        :key="name"
+        :name="name"
+        @setName="filterByNameHandler"
+      ></Button>
+    </header>
+    <div class="content">
+      <Card :data="students"></Card>
+    </div>
+  </main>
 </template>
 
 <style scoped>
-.app_home {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.main {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
 }
-.person_div {
-	display: flex;
-	flex-wrap: wrap;
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 80px;
+}
+.content {
+  margin: 40px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 </style>
